@@ -23,15 +23,15 @@ change :: Money -> [ Coin ]
 
 Before TDD there was CDD (compiler driven development)
 
-Compiler says binding for change?
+Compiler says, "You havn't implemented 'change'"
 
 ```haskell
 change :: Money -> [ Coin ]
 change = []
 ```
-Compiler says: 
-  What is Money? 
-  What is Coin?
+Compiler askes:
+  - What is Money?
+  - What is Coin?
 
 ```haskell
 type Money = Int
@@ -40,12 +40,11 @@ change :: money -> [ Coin ]
 change = []
 ```
 
-Complier says your implementation doesn't match you signature
+Complier says, "Your implementation doesn't match you signature"
 
 ```haskell
 change m = []
 ```
-
 
 First Test
 ---------------
@@ -60,27 +59,27 @@ Instead lets write change 42
 prop_change_for_42 m = forAll choose (42,42) change m = [25,10,5,1,1]
 ```
 
-Compiler says, 'It should have been an equals'
+Compiler says, "'=' should be '=='"
 
 ```haskell
 prop_change_for_42 m = forAll choose (42,42) change m == [25,10,5,1,1]
 ```
 
-Compiler doesn't know about forAll or choose.
+Compiler says, "Import the module that contains 'forAll' ond 'choose'."
 
-It comes out of QuickTest or something
+I think they come from something like Test.QuickTest
 
 ```haskell
 import Test.QuickTest
 ```
 
-Compiler sweetly says, "Did you mean QuickCheck?"
+Compiler sweetly says, "I think you ment QuickCheck?"
 
 ```haskell
 import Test.QuickCheck
 ```
 
-Compiler says you need parenthesis
+Compiler says, "You need parenthesis around each argument"
 
 ```haskell
 prop_change_for_42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
@@ -92,3 +91,8 @@ Compiler says, "The last parameter should be a function that take a Money and re
 prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 ```
 
+Wahoo a failing test. I can make that pass :-D
+
+```haskell
+prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
+```
