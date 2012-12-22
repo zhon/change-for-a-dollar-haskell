@@ -119,12 +119,37 @@ change 0 = []
 change m = [25,10,5,1,1]
 ```
 
-Enough evil pair! Lets write a check that gets a complete answer.
+Test Identity
+-------------
+
+Enough evil pair! Lets write a check that requires q _real_ implementation.
 
 
 ```haskell
 prop_change_identity m = forAll (choose (0,100)) $ \m -> m == sum change m
 ```
+
+Implementation
+--------------
+
+```haskell
+change :: Money -> [ Coin ]
+change 0 = []
+change m = largestCoin m : change (m - largestCoin m)
+```
+Compiler says, "Obviously you need to implement largetCoin"
+
+We could use TDD on it but I think it is obvious.
+
+```haskell
+change :: Money -> [ Coin ]
+change 0 = []
+change m = largestCoin m : change (m - largestCoin m)
+    where largestCoin m = head $ dropWhile (>m) coins
+
+coins = [25,10,5,1]
+```
+
 
 
 
