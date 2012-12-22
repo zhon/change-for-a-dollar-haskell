@@ -23,7 +23,7 @@ change :: Money -> [ Coin ]
 
 Before TDD there was CDD (compiler driven development)
 
-Compiler says, "You havn't implemented 'change'"
+Compiler says, "You havn't implemented 'change'!"
 
 ```haskell
 change :: Money -> [ Coin ]
@@ -46,7 +46,7 @@ Complier says, "Your implementation doesn't match you signature"
 change m = []
 ```
 
-First Test
+Acceptance Test
 ---------------
 
 Finally we get to write a test!
@@ -91,8 +91,41 @@ Compiler says, "The last parameter should be a function that take a Money and re
 prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 ```
 
-Wahoo a failing test. I can make that pass :-D
+Run That Test
+-------------
+
+```shell
+main> quickCheck prop_change_for_42
+```
+
+Wahoo a failing test. I can make it pass :-D
 
 ```haskell
-prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
+change m = [25,10,5,1,1]
 ```
+
+Test Zero
+---------
+
+```haskell
+prop_change_for_0 m = forAll (choose (0,0)) $ \m -> change m == []
+```
+
+Make it pass
+
+```haskell
+change :: Money -> [ Coin ]
+change 0 = []
+change m = [25,10,5,1,1]
+```
+
+Enough evil pair! Lets write a check that gets a complete answer.
+
+
+```haskell
+prop_change_identity m = forAll (choose (0,100)) $ \m -> m == sum change m
+```
+
+
+
+
