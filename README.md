@@ -1,4 +1,21 @@
-change-for-a-dollar-haskell
-===========================
+Change for a Dollar Kata in Haskell
+===================================
 
-TDD? Kata for creating change in haskell
+Running
+-------
+
+```shell
+% ghci
+Prelude> :load change
+```
+
+First we write a test
+
+```haskell
+import Test.QuickTest
+```
+Whoops
+
+```haskell
+import Test.QuickCheck
+```
