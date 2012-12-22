@@ -21,15 +21,17 @@ In haskell we define our function name and types first
 change :: Money -> [ Coin ]
 ```
 
-Before TDD came CDD (compiler driven development)
+Before TDD there was CDD (compiler driven development)
 
-We need a binding for change?
+Compiler says binding for change?
 
 ```haskell
 change :: Money -> [ Coin ]
 change = []
 ```
-What type is Money? What type is Coin?
+Compiler says: 
+  What is Money? 
+  What is Coin?
 
 ```haskell
 type Money = Int
@@ -38,32 +40,55 @@ change :: money -> [ Coin ]
 change = []
 ```
 
-Complier says our implementation is messed up
+Complier says your implementation doesn't match you signature
 
 ```haskell
 change m = []
 ```
 
 
-Acceptance Test
+First Test
 ---------------
 
-First we write a test
+Finally we get to write a test!
+
+Testing change 0 would pass so you won't do that.
+
+Instead lets write change 42
+
+```haskell
+prop_change_for_42 m = forAll choose (42,42) change m = [25,10,5,1,1]
+```
+
+Compiler says, 'It should have been an equals'
+
+```haskell
+prop_change_for_42 m = forAll choose (42,42) change m == [25,10,5,1,1]
+```
+
+Compiler doesn't know about forAll or choose.
+
+It comes out of QuickTest or something
 
 ```haskell
 import Test.QuickTest
 ```
-Whoops
+
+Compiler sweetly says, "Did you mean QuickCheck?"
 
 ```haskell
 import Test.QuickCheck
 ```
 
-Abusing QuickCheck we write
+Compiler says you need parenthesis
 
 ```haskell
-prop_change_for_42 n = forall choose (42,42) change n
+prop_change_for_42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
 ```
 
+Compiler says, "The last parameter should be a function that take a Money and returns a Testable"
 
+```haskell
+prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
+```
 
