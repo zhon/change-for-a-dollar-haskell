@@ -19,3 +19,7 @@ prop_change_for_0 m = forAll (choose (0,0)) $ \m -> change m == []
 
 prop_change_identity m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 
+prop_largestCoin_penny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
+
+prop_largestCoin_nickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
+
