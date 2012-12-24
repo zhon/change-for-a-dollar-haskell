@@ -8,10 +8,16 @@ change 0 = []
 change m = largestCoin m : change (m - largestCoin m)
 
 largestCoin :: Money -> Coin
-largestCoin m = head $ takeWhile (>m) coins
+largestCoin m = head $ dropWhile (>m) coins
 
 coins = [25,10,5,1]
 
+change' = unfoldr nextCoin
+    where
+        nextCoin 0 = Nothing
+        nextCoin m = Just (largestCoin m, m - largestCoin m)
+
+change = change'
 
 prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 

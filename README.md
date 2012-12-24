@@ -162,13 +162,13 @@ prop_largestCoin_nickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
 
 ```haskell
 largestCoin :: Money -> Coin
-largestCoin m = head takeWhile (>m) [5,1]
+largestCoin m = head dropWhile (>m) [5,1]
 ```
 
-Compiler says, "You need paranathesis around 'takeWhile' and it's args"
+Compiler says, "You need parenthesis around 'dropWhile' and it's args"
 
 ```haskell
-largestCoin m = head $ takeWhile (>m) [5,1]
+largestCoin m = head $ dropWhile (>m) [5,1]
 ```
 
 Refactor for Clairity 
@@ -177,8 +177,18 @@ Refactor for Clairity
 ...and finish the implementation
 
 ```haskell
-largestCoin m = head $ takeWhile (>m) coins
+largestCoin m = head $ dropWhile (>m) coins
 
 coins = [25,10,5,1]
+```
+
+Refactor Away Recursion
+-----------------------
+
+```haskell
+change' = unfoldr nextCoin
+    where
+        nextCoin 0 = Nothing
+        nextCoin m = Just (largestCoin m, m - largestCoin m)
 ```
 
