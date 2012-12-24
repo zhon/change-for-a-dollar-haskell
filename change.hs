@@ -17,13 +17,11 @@ change' = unfoldr nextCoin
         nextCoin 0 = Nothing
         nextCoin m = Just (largestCoin m, m - largestCoin m)
 
-change = change'
-
 prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 
 prop_change_for_0 m = forAll (choose (0,0)) $ \m -> change m == []
 
-prop_change_identity m = forAll (choose (0,100)) $ \m -> m == sum (change m)
+prop_change_round_trip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 
 prop_largestCoin_penny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
 

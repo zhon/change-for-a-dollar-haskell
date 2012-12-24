@@ -65,8 +65,6 @@ prop_change_for_42 m = forAll choose (42,42) change m == [25,10,5,1,1]
 
 Compiler says, "Import the module that contains 'forAll' ond 'choose'."
 
-I think they come from something like Test.QuickTest
-
 ```haskell
 import Test.QuickTest
 ```
@@ -117,13 +115,13 @@ change 0 = []
 change m = [25,10,5,1,1]
 ```
 
-Test Identity
+Test There and Back Again
 -------------
 
 Enough evil pair! Lets write a check that requires a _real_ implementation.
 
 ```haskell
-prop_change_identity m = forAll (choose (0,100)) $ \m -> m == sum change m
+prop_change_round_trip m = forAll (choose (0,100)) $ \m -> m == sum change m
 ```
 
 Implementation
