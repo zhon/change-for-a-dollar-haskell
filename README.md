@@ -40,7 +40,7 @@ change :: money -> [ Coin ]
 change = []
 ```
 
-Complier says, "Your implementation doesn't match you signature"
+Complier says, "Your implementation doesn't match your signature"
 
 ```haskell
 change m = []
@@ -51,9 +51,7 @@ Acceptance Test
 
 Finally we get to write a test!
 
-Testing change 0 would pass so you won't do that.
-
-Instead lets write change 42
+Testing 'change 0' would pass so we won't do that. Instead lets change the meaning of life.
 
 ```haskell
 prop_change_for_42 m = forAll choose (42,42) change m = [25,10,5,1,1]
@@ -73,7 +71,7 @@ I think they come from something like Test.QuickTest
 import Test.QuickTest
 ```
 
-Compiler sweetly says, "I think you ment QuickCheck?"
+Compiler sweetly says, "I think you ment QuickCheck"
 
 ```haskell
 import Test.QuickCheck
@@ -98,7 +96,7 @@ Run That Test
 main> quickCheck prop_change_for_42
 ```
 
-Wahoo a failing test. I can make it pass :-D
+Wahoo a failing test. You can make it pass :-D
 
 ```haskell
 change m = [25,10,5,1,1]
@@ -124,7 +122,6 @@ Test Identity
 
 Enough evil pair! Lets write a check that requires a _real_ implementation.
 
-
 ```haskell
 prop_change_identity m = forAll (choose (0,100)) $ \m -> m == sum change m
 ```
@@ -137,13 +134,14 @@ change :: Money -> [ Coin ]
 change 0 = []
 change m = largestCoin m : change (m - largestCoin m)
 ```
-Compiler says, "Obviously you need to implement largestCoin"
+Compiler says, "Obviously, you need to implement largestCoin"
 
-Ok, we start with a test.
+In TDD, we always start with a test.
 
 ```haskell
 prop_largestCoin_penny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
 ```
+Compiler asks, "What is largestCoin?"
 
 ```haskell
 largestCoin m = 1
@@ -154,7 +152,6 @@ Compiler says, "You need to declare the type of 'largestCoin'"
 largestCoin :: Money -> Coin
 largestCoin m = 1
 ```
-
 
 ```haskell
 prop_largestCoin_nickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
@@ -171,7 +168,7 @@ Compiler says, "You need parenthesis around 'dropWhile' and it's args"
 largestCoin m = head $ dropWhile (>m) [5,1]
 ```
 
-Refactor for Clairity 
+Refactor for Clairity
 --------------------
 
 ...and finish the implementation
