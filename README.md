@@ -63,7 +63,7 @@ Compiler says, "'=' should be '=='"
 prop_change_for_42 m = forAll choose (42,42) change m == [25,10,5,1,1]
 ```
 
-Compiler says, "Import the module that contains 'forAll' ond 'choose'."
+Compiler says, "Import the module that contains 'forAll' and 'choose'."
 
 ```haskell
 import Test.QuickTest
@@ -81,7 +81,7 @@ Compiler says, "You need parenthesis around each argument"
 prop_change_for_42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
 ```
 
-Compiler says, "The last parameter should be a function that take a Money and returns a Testable"
+Compiler says, "The last parameter should be a function that takes a Money and returns a Testable"
 
 ```haskell
 prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
@@ -115,7 +115,7 @@ change 0 = []
 change m = [25,10,5,1,1]
 ```
 
-Test There and Back Again
+There and Back Again
 -------------
 
 Enough evil pair! Lets write a check that requires a _real_ implementation.
