@@ -121,7 +121,7 @@ There and Back Again
 Enough evil pair! Lets write a check that requires a _real_ implementation.
 
 ```haskell
-prop_change_round_trip m = forAll (choose (0,100)) $ \m -> m == sum change m
+prop_change_round_trip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 ```
 
 Implementation
