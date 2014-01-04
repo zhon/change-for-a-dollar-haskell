@@ -1,8 +1,14 @@
+{-# LANGUAGE TemplateHaskell #-}
+
+module CoinChanger where
+
 import Test.QuickCheck
+import Test.QuickCheck.All
 import Data.List
 
 type Money = Int
 type Coin = Int
+
 change :: Money -> [ Coin ]
 change 0 = []
 change m = largestCoin m : change (m - largestCoin m)
@@ -17,13 +23,20 @@ change' = unfoldr nextCoin
         nextCoin 0 = Nothing
         nextCoin m = Just (largestCoin m, m - largestCoin m)
 
-prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 
-prop_change_for_0 m = forAll (choose (0,0)) $ \m -> change m == []
+prop_ChangeFor42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 
-prop_change_round_trip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
+prop_ChangeFor0 m = forAll (choose (0,0)) $ \m -> change m == []
 
-prop_largestCoin_penny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
+prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 
-prop_largestCoin_nickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
+prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
+
+prop_LargestCoinNickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
+
+prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == change' m
+
+
+
+runTests = $quickCheckAll
 

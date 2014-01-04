@@ -5,6 +5,16 @@ Up and Running
 -------
 Install [Haskell](http://www.haskell.org/platform/)
 
+Create a file ``change.hs``
+
+with
+
+```haskell
+
+module CoinChanger where
+
+```
+
 Fire up ghci and load your file (or run it with runhaskell)
 
 ```shell
@@ -15,7 +25,7 @@ Prelude> :load change
 Interface
 ---------
 
-In haskell we define our function name and types first
+In Haskell we define our function name and types first
 
 ```haskell
 change :: Money -> [ Coin ]
@@ -23,13 +33,13 @@ change :: Money -> [ Coin ]
 
 Before TDD there was CDD (compiler driven development)
 
-Compiler says, "You havn't implemented 'change'!"
+Compiler says, "You haven't implemented 'change'!"
 
 ```haskell
 change :: Money -> [ Coin ]
 change = []
 ```
-Compiler askes:
+Compiler asks:
   - What is Money?
   - What is Coin?
 
@@ -43,7 +53,7 @@ change = []
 Complier says, "Your implementation doesn't match your signature"
 
 ```haskell
-change m = []
+change _ = []
 ```
 
 Acceptance Test
@@ -54,13 +64,13 @@ Finally we get to write a test!
 Testing 'change 0' would pass so we won't do that. Instead lets change the meaning of life.
 
 ```haskell
-prop_change_for_42 m = forAll choose (42,42) change m = [25,10,5,1,1]
+prop_ChangeFor42 m = forAll choose (42,42) change m = [25,10,5,1,1]
 ```
 
 Compiler says, "'=' should be '=='"
 
 ```haskell
-prop_change_for_42 m = forAll choose (42,42) change m == [25,10,5,1,1]
+prop_ChangeFor42 m = forAll choose (42,42) change m == [25,10,5,1,1]
 ```
 
 Compiler says, "Import the module that contains 'forAll' and 'choose'."
@@ -69,7 +79,7 @@ Compiler says, "Import the module that contains 'forAll' and 'choose'."
 import Test.QuickTest
 ```
 
-Compiler sweetly says, "I think you ment QuickCheck"
+Compiler sweetly says, "I think you mean QuickCheck"
 
 ```haskell
 import Test.QuickCheck
@@ -78,20 +88,20 @@ import Test.QuickCheck
 Compiler says, "You need parenthesis around each argument"
 
 ```haskell
-prop_change_for_42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
+prop_ChangeFor42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
 ```
 
 Compiler says, "The last parameter should be a function that takes a Money and returns a Testable"
 
 ```haskell
-prop_change_for_42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
+prop_ChangeFor42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
 ```
 
 Run That Test
 -------------
 
 ```shell
-main> quickCheck prop_change_for_42
+*CoinChanger> quickCheck prop_ChangeFor42
 ```
 
 Wahoo a failing test. You can make it pass :-D
@@ -104,7 +114,12 @@ Test Zero
 ---------
 
 ```haskell
-prop_change_for_0 m = forAll (choose (0,0)) $ \m -> change m == []
+prop_ChangeFor0 m = forAll (choose (0,0)) $ \m -> change m == []
+```
+
+Running it
+```shell
+*CoinChanger> prop_ChangeFor0
 ```
 
 Make it pass
@@ -115,13 +130,44 @@ change 0 = []
 change m = [25,10,5,1,1]
 ```
 
+Running Mutiple Tests
+---------------------
+
+Your probably tired or running tests individually. I know I am!
+
+Adding the following to the bottom of the file should fix that
+
+```haskell
+runTests = $(quickCheckAll)
+```
+
+Compiler says, "``$`` is a part of ``TemplateHaskell``, please let the compiler know"
+
+Adding
+```haskell
+{-# LANGUAGE TemplateHaskell #-}
+```
+to the top of file should do the trick.
+
+Compiler says, "quickCheckAll! Where can I find that?"
+
+```haskell
+import Test.QuickCheck.All
+```
+
+But how do I _run_ all my tests?
+
+```shell
+*CoinChanger> runTests
+```
+
 There and Back Again
 -------------
 
 Enough evil pair! Lets write a check that requires a _real_ implementation.
 
 ```haskell
-prop_change_round_trip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
+prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 ```
 
 Implementation
@@ -137,7 +183,7 @@ Compiler says, "Obviously, you need to implement largestCoin"
 In TDD, we always start with a test.
 
 ```haskell
-prop_largestCoin_penny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
+prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
 ```
 Compiler asks, "What is largestCoin?"
 
@@ -152,7 +198,7 @@ largestCoin m = 1
 ```
 
 ```haskell
-prop_largestCoin_nickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
+prop_LargestCoinNickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
 ```
 
 ```haskell
@@ -186,4 +232,17 @@ change' = unfoldr nextCoin
         nextCoin 0 = Nothing
         nextCoin m = Just (largestCoin m, m - largestCoin m)
 ```
+
+Compiler says, "unfoldr? unfoldr?! Who has heard of _unfoldr_?"
+
+```haskell
+import Data.List
+```
+
+Lets write a test to make sure both implementations are working (before deleting).
+
+```haskell
+prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == change' m
+```
+
 
