@@ -5,9 +5,7 @@ Up and Running
 -------
 Install [Haskell](http://www.haskell.org/platform/)
 
-Create file ``change.hs``
-
-containing
+Create file ``change.hs`` containing
 
 ```haskell
 
@@ -79,11 +77,6 @@ prop_ChangeFor42 m = forAll choose (42,42) change m == [25,10,5,1,1]
 
 Compiler says, "Import the module that contains ``forAll`` and ``choose``."
 
-```haskell
-import Test.QuickTest
-```
-
-Compiler sweetly says, "I think you mean``QuickCheck``"
 
 ```haskell
 import Test.QuickCheck
@@ -139,7 +132,7 @@ Running Mutiple Tests
 
 You're probably tired or running tests individually. I know I am!
 
-Adding ``runTests`` should fix that.
+Adding ``runTests`` fixes that.
 
 ```haskell
 runTests = $quickCheckAll
@@ -183,7 +176,7 @@ change m = largestCoin m : change (m - largestCoin m)
 ```
 Compiler says, "Obviously, you need to implement ``largestCoin``."
 
-In TDD, we always start with a test.
+In TDD, we start with a test.
 
 ```haskell
 prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
@@ -249,4 +242,5 @@ Hmm... What if we got our refactor wrong? That is where ``QuickCheck`` shines.
 prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == change' m
 ```
 
+Well done! It is time for cookies and milk!
 
