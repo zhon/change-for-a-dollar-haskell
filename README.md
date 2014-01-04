@@ -5,9 +5,9 @@ Up and Running
 -------
 Install [Haskell](http://www.haskell.org/platform/)
 
-Create a file ``change.hs``
+Create file ``change.hs``
 
-with
+containing
 
 ```haskell
 
@@ -19,7 +19,7 @@ Fire up ghci and load your file (or run it with runhaskell)
 
 ```shell
 % ghci
-Prelude> :load change
+*CoinChanger> :load change
 ```
 
 Interface
@@ -32,6 +32,10 @@ change :: Money -> [ Coin ]
 ```
 
 Before TDD there was CDD (compiler driven development)
+
+```shell
+*CoinChanger> :load change
+```
 
 Compiler says, "You haven't implemented ``change``!"
 
@@ -117,12 +121,12 @@ Test Zero
 prop_ChangeFor0 m = forAll (choose (0,0)) $ \m -> change m == []
 ```
 
-Running it
+Red
 ```shell
 *CoinChanger> prop_ChangeFor0
 ```
 
-Make it pass
+Green
 
 ```haskell
 change :: Money -> [ Coin ]
@@ -135,21 +139,20 @@ Running Mutiple Tests
 
 You're probably tired or running tests individually. I know I am!
 
-Adding the following to the bottom of the file should fix that
+Adding ``runTests`` should fix that.
 
 ```haskell
 runTests = $quickCheckAll
 ```
 
-Compiler says, "``$`` is a part of ``TemplateHaskell``, please let me know you want meta-programming!"
+Compiler says, "``$`` is a part of ``TemplateHaskell``, please let me know when you meta-program."
 
-Adding
+Adding the following to the top of the file will do the trick:
 ```haskell
 {-# LANGUAGE TemplateHaskell #-}
 ```
-to the top of file should do the trick.
 
-Compiler says, "``quickCheckAll``! Where can I find that?"
+Compiler is still not happy, "``quickCheckAll``! Where can I find that?"
 
 ```haskell
 import Test.QuickCheck.All
@@ -178,7 +181,7 @@ change :: Money -> [ Coin ]
 change 0 = []
 change m = largestCoin m : change (m - largestCoin m)
 ```
-Compiler says, "Obviously, you need to implement ``largestCoin``"
+Compiler says, "Obviously, you need to implement ``largestCoin``."
 
 In TDD, we always start with a test.
 
@@ -188,7 +191,7 @@ prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
 Compiler says, "You still need to implement ``largestCoin``?"
 
 ```haskell
-largestCoin m = 1
+largestCoin _ = 1
 ```
 Compiler says, "I am still confused! What type is ``largestCoin``?"
 
@@ -202,27 +205,26 @@ Are you feeling nickel and dimed?
 prop_LargestCoinNickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
 prop_LargestCoinDime   m = forAll (choose (10,24)) $ \m -> largestCoin m == 10
 ```
+Enough hard coding, lets implementation it.
 
 ```haskell
 largestCoin :: Money -> Coin
-largestCoin m = head dropWhile (>m) [10,5,1]
+largestCoin m = head dropWhile (>m) [25,10,5,1]
 ```
 
 Compiler says, "Like Clojure, I need parenthesis around ``dropWhile`` and it's 2 args"
 
 ```haskell
-largestCoin m = head $ dropWhile (>m) [10,5,1]
+largestCoin m = head $ dropWhile (>m) [25,10,5,1]
 ```
 
 Refactor for Clairity
 --------------------
 
-...and finish the implementation
-
 ```haskell
-largestCoin m = head $ dropWhile (>m) coins
-
 coins = [25,10,5,1]
+
+largestCoin m = head $ dropWhile (>m) coins
 ```
 
 Refactor Away Recursion
@@ -241,7 +243,7 @@ Compiler says, "``unfoldr``? ``unfoldr``?! Who has heard of ``unfoldr``?!!"
 import Data.List
 ```
 
-Hmm... What if we got our refactor wrong? A test would be perfect now.
+Hmm... What if we got our refactor wrong? That is where ``QuickCheck`` shines.
 
 ```haskell
 prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == change' m
