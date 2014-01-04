@@ -33,15 +33,15 @@ change :: Money -> [ Coin ]
 
 Before TDD there was CDD (compiler driven development)
 
-Compiler says, "You haven't implemented 'change'!"
+Compiler says, "You haven't implemented ``change``!"
 
 ```haskell
 change :: Money -> [ Coin ]
 change = []
 ```
 Compiler asks:
-  - What is Money?
-  - What is Coin?
+  - What is ``Money``?
+  - What is ``Coin``?
 
 ```haskell
 type Money = Int
@@ -61,25 +61,25 @@ Acceptance Test
 
 Finally we get to write a test!
 
-Testing 'change 0' would pass so we won't do that. Instead lets change the meaning of life.
+Testing ``change 0`` would pass so we won't do that. Instead lets change the meaning of life.
 
 ```haskell
 prop_ChangeFor42 m = forAll choose (42,42) change m = [25,10,5,1,1]
 ```
 
-Compiler says, "'=' should be '=='"
+Compiler says, "``=`` should be ``==``"
 
 ```haskell
 prop_ChangeFor42 m = forAll choose (42,42) change m == [25,10,5,1,1]
 ```
 
-Compiler says, "Import the module that contains 'forAll' and 'choose'."
+Compiler says, "Import the module that contains ``forAll`` and ``choose``."
 
 ```haskell
 import Test.QuickTest
 ```
 
-Compiler sweetly says, "I think you mean QuickCheck"
+Compiler sweetly says, "I think you mean``QuickCheck``"
 
 ```haskell
 import Test.QuickCheck
@@ -91,7 +91,7 @@ Compiler says, "You need parenthesis around each argument"
 prop_ChangeFor42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
 ```
 
-Compiler says, "The last parameter should be a function that takes a Money and returns a Testable"
+Compiler says, "The last parameter should be a function that takes a ``Money`` and returns a ``Testable``"
 
 ```haskell
 prop_ChangeFor42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
@@ -107,7 +107,7 @@ Run That Test
 Wahoo a failing test. You can make it pass :-D
 
 ```haskell
-change m = [25,10,5,1,1]
+change _ = [25,10,5,1,1]
 ```
 
 Test Zero
@@ -127,21 +127,21 @@ Make it pass
 ```haskell
 change :: Money -> [ Coin ]
 change 0 = []
-change m = [25,10,5,1,1]
+change _ = [25,10,5,1,1]
 ```
 
 Running Mutiple Tests
 ---------------------
 
-Your probably tired or running tests individually. I know I am!
+You're probably tired or running tests individually. I know I am!
 
 Adding the following to the bottom of the file should fix that
 
 ```haskell
-runTests = $(quickCheckAll)
+runTests = $quickCheckAll
 ```
 
-Compiler says, "``$`` is a part of ``TemplateHaskell``, please let the compiler know"
+Compiler says, "``$`` is a part of ``TemplateHaskell``, please let me know you want meta-programming!"
 
 Adding
 ```haskell
@@ -149,7 +149,7 @@ Adding
 ```
 to the top of file should do the trick.
 
-Compiler says, "quickCheckAll! Where can I find that?"
+Compiler says, "``quickCheckAll``! Where can I find that?"
 
 ```haskell
 import Test.QuickCheck.All
@@ -178,38 +178,40 @@ change :: Money -> [ Coin ]
 change 0 = []
 change m = largestCoin m : change (m - largestCoin m)
 ```
-Compiler says, "Obviously, you need to implement largestCoin"
+Compiler says, "Obviously, you need to implement ``largestCoin``"
 
 In TDD, we always start with a test.
 
 ```haskell
 prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
 ```
-Compiler asks, "What is largestCoin?"
+Compiler says, "You still need to implement ``largestCoin``?"
 
 ```haskell
 largestCoin m = 1
 ```
-Compiler says, "You need to declare the type of 'largestCoin'"
+Compiler says, "I am still confused! What type is ``largestCoin``?"
 
 ```haskell
 largestCoin :: Money -> Coin
-largestCoin m = 1
+largestCoin _ = 1
 ```
+Are you feeling nickel and dimed?
 
 ```haskell
 prop_LargestCoinNickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5
+prop_LargestCoinDime   m = forAll (choose (10,24)) $ \m -> largestCoin m == 10
 ```
 
 ```haskell
 largestCoin :: Money -> Coin
-largestCoin m = head dropWhile (>m) [5,1]
+largestCoin m = head dropWhile (>m) [10,5,1]
 ```
 
-Compiler says, "You need parenthesis around 'dropWhile' and it's args"
+Compiler says, "Like Clojure, I need parenthesis around ``dropWhile`` and it's 2 args"
 
 ```haskell
-largestCoin m = head $ dropWhile (>m) [5,1]
+largestCoin m = head $ dropWhile (>m) [10,5,1]
 ```
 
 Refactor for Clairity
@@ -233,13 +235,13 @@ change' = unfoldr nextCoin
         nextCoin m = Just (largestCoin m, m - largestCoin m)
 ```
 
-Compiler says, "unfoldr? unfoldr?! Who has heard of _unfoldr_?"
+Compiler says, "``unfoldr``? ``unfoldr``?! Who has heard of ``unfoldr``?!!"
 
 ```haskell
 import Data.List
 ```
 
-Lets write a test to make sure both implementations are working (before deleting).
+Hmm... What if we got our refactor wrong? A test would be perfect now.
 
 ```haskell
 prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == change' m
