@@ -242,5 +242,6 @@ Hmm... What if we got our refactor wrong? That is where ``QuickCheck`` shines.
 prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == change' m
 ```
 
-Well done! It is time for cookies and milk!
+Good work! It is time for cookies and milk!
+------------------------------------------
 
