@@ -48,7 +48,7 @@ Compiler asks:
 ```haskell
 type Money = Int
 type Coin = Int
-change :: money -> [ Coin ]
+change :: Money -> [ Coin ]
 change = []
 ```
 
