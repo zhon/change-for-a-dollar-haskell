@@ -10,6 +10,7 @@ import Data.List
 type Money = Int
 type Coin = Int
 
+coins :: [ Coin ]
 coins = [25,10,5,1]
 
 change :: Money -> [ Coin ]

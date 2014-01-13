@@ -215,6 +215,7 @@ Refactor for Clairity
 --------------------
 
 ```haskell
+coins :: [ Coin ]
 coins = [25,10,5,1]
 
 largestCoin m = head $ dropWhile (>m) coins
