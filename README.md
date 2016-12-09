@@ -150,7 +150,7 @@ But how do I _run_ all my tests?
 There and Back Again
 -------------
 
-Enough evil pair writting **example tests**! Lets write a **property-based** test that requires a _real_ implementation.
+Enough evil pair writing **example tests**! Lets write a **property-based** test that requires a _real_ implementation.
 
 ```haskell
 prop_ChangeRoundTrip m = forAll (choose (0,100)) m == sum (change m)
@@ -220,6 +220,16 @@ coins :: [ Coin ]
 coins = [25,10,5,1]
 
 largestCoin m = head $ dropWhile (>m) coins
+```
+
+Lock Down Implementation
+-----------------------
+
+If someone adds a 50 cent coin to the end of coins, our code would break. We should add a **property test** for that.
+
+
+```haskell
+prop_CoinsAreOrderLargestToSmallest = coins == (reverse $ sort coins)
 ```
 
 Refactor Away Recursion
