@@ -99,8 +99,8 @@ Test Zero
 prop_ChangeFor0 = change 0 == []
 ```
 
-```diff
-- Red
+```html
+<span style="color:red">Red</span>
 ```
 
 ```shell
