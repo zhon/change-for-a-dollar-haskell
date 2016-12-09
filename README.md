@@ -99,7 +99,9 @@ Test Zero
 prop_ChangeFor0 = change 0 == []
 ```
 
-<span style="color:red">Red</span>
+```diff
+-Red
+```
 
 ```shell
 *CoinChanger> quickCheck prop_ChangeFor0
