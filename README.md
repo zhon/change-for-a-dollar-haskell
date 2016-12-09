@@ -58,44 +58,29 @@ Complier says, "Your implementation doesn't match your signature"
 change _ = []
 ```
 
-Acceptance Test
----------------
+Example Test
+------------
 
 Finally we get to write a test!
 
 Testing ``change 0`` would pass so we won't do that. Instead lets change the meaning of life.
 
 ```haskell
-prop_ChangeFor42 m = forAll choose (42,42) change m = [25,10,5,1,1]
+prop_ChangeFor42 = change 42 = [25,10,5,1,1]
 ```
 
 Compiler says, "``=`` should be ``==``"
 
 ```haskell
-prop_ChangeFor42 m = forAll choose (42,42) change m == [25,10,5,1,1]
-```
-
-Compiler says, "Import the module that contains ``forAll`` and ``choose``."
-
-
-```haskell
-import Test.QuickCheck
-```
-
-Compiler says, "You need parenthesis around each argument"
-
-```haskell
-prop_ChangeFor42 m = forAll (choose (42,42)) $ change m == [25,10,5,1,1]
-```
-
-Compiler says, "The last parameter should be a function that takes a ``Money`` and returns a ``Testable``"
-
-```haskell
-prop_ChangeFor42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
+prop_ChangeFor42 = change 42 == [25,10,5,1,1]
 ```
 
 Run That Test
 -------------
+
+```haskell
+import Test.QuickCheck
+```
 
 ```shell
 *CoinChanger> quickCheck prop_ChangeFor42
@@ -111,12 +96,13 @@ Test Zero
 ---------
 
 ```haskell
-prop_ChangeFor0 m = forAll (choose (0,0)) $ \m -> change m == []
+prop_ChangeFor0 = change 0 == []
 ```
 
 Red
+
 ```shell
-*CoinChanger> prop_ChangeFor0
+*CoinChanger> quickCheck prop_ChangeFor0
 ```
 
 Green
@@ -160,7 +146,18 @@ But how do I _run_ all my tests?
 There and Back Again
 -------------
 
-Enough evil pair! Lets write a check that requires a _real_ implementation.
+Enough evil pair writting **example tests**! Lets write a **property-based** test that requires a _real_ implementation.
+
+```haskell
+prop_ChangeRoundTrip m = forAll (choose (0,100)) m == sum (change m)
+```
+Compiler says, "You need parenthesis around each argument"
+
+```haskell
+prop_ChangeRoundTrip m = forAll (choose (0,100)) $ m == sum (change m)
+```
+
+Compiler says, "The last parameter should be a function that takes a ``Money`` and returns a ``Testable``"
 
 ```haskell
 prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
@@ -174,14 +171,14 @@ change :: Money -> [ Coin ]
 change 0 = []
 change m = largestCoin m : change (m - largestCoin m)
 ```
-Compiler says, "Obviously, you need to implement ``largestCoin``."
+Compiler says, "You need to implement ``largestCoin``."
 
 In TDD, we start with a test.
 
 ```haskell
 prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
 ```
-Compiler says, "You still need to implement ``largestCoin``?"
+Compiler says, "You still haven't implemented ``largestCoin``?"
 
 ```haskell
 largestCoin _ = 1
@@ -192,7 +189,7 @@ Compiler says, "I am still confused! What type is ``largestCoin``?"
 largestCoin :: Money -> Coin
 largestCoin _ = 1
 ```
-Are you feeling nickel and dimed?
+Are you feeling nickel and dimed, yet?
 
 ```haskell
 prop_LargestCoinNickel m = forAll (choose (5,9)) $ \m -> largestCoin m == 5

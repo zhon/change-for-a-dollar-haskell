@@ -26,8 +26,8 @@ change' = unfoldr nextCoin
         nextCoin m = Just (largestCoin m, m - largestCoin m)
 
 
-prop_ChangeFor42 m = forAll (choose (42,42)) $ \m -> change m == [25,10,5,1,1]
-prop_ChangeFor0 m = forAll (choose (0,0)) $ \m -> change m == []
+prop_ChangeFor42 = change 42 == [25,10,5,1,1]
+prop_ChangeFor0 = change 0 == []
 prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 
 prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
