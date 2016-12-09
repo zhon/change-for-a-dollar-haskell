@@ -100,14 +100,16 @@ prop_ChangeFor0 = change 0 == []
 ```
 
 ```diff
--Red
+- Red
 ```
 
 ```shell
 *CoinChanger> quickCheck prop_ChangeFor0
 ```
 
-Green
+```diff
++ Green
+```
 
 ```haskell
 change :: Money -> [ Coin ]
