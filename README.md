@@ -1,6 +1,8 @@
 Change for a Dollar Kata in Haskell
 ===================================
 
+Change for a Dollar is just a fun name for the Coin Change Kata where you are given an amount and you must convert that into coins.
+
 Up and Running
 -------
 Install [Haskell](http://www.haskell.org/platform/)
