@@ -1,4 +1,4 @@
-Change for a Dollar Kata in Haskell
+Change for a Dollar Kata in Haskell Using Property-Based Test TDD
 ===================================
 
 Change for a Dollar is just a fun name for the Coin Change Kata where you are given an amount and you must convert that into coins.
@@ -60,21 +60,24 @@ Complier says, "Your implementation doesn't match your signature"
 change _ = []
 ```
 
-Example Test
+First Test There and Back Again
 ------------
 
-Finally we get to write a test!
-
-Testing ``change 0`` would pass so we won't do that. Instead lets change the meaning of life.
+The simplest property I can think of is *the sum of change x will equal x*
 
 ```haskell
-prop_ChangeFor42 = change 42 = [25,10,5,1,1]
+prop_ChangeRoundTrip m = forAll (choose (0,100)) m == sum (change m)
+```
+Compiler says, "You need parenthesis around each argument"
+
+```haskell
+prop_ChangeRoundTrip m = forAll (choose (0,100)) $ m == sum (change m)
 ```
 
-Compiler says, "``=`` should be ``==``"
+Compiler says, "The last parameter should be a function that takes a ``Money`` and returns a ``Testable``"
 
 ```haskell
-prop_ChangeFor42 = change 42 == [25,10,5,1,1]
+prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 ```
 
 Run That Test
@@ -85,41 +88,58 @@ import Test.QuickCheck
 ```
 
 ```shell
-*CoinChanger> quickCheck prop_ChangeFor42
-```
-
-Wahoo a failing test. You can make it pass :-D
-
-```haskell
-change _ = [25,10,5,1,1]
-```
-
-Test Zero
----------
-
-```haskell
-prop_ChangeFor0 = change 0 == []
+*CoinChanger> quickCheck prop_ChangeRoundTrip
 ```
 
 ```diff
 -Red
 ```
 
-```shell
-*CoinChanger> quickCheck prop_ChangeFor0
+
+Pass the Test
+--------------
+
+The simplest solution to passing this test is return the amount.
+
+```haskell
+change :: Money -> [ Coin ]
+change m = m : []
 ```
 
 ```diff
 +Green
 ```
 
+Test No Weird Coins
+---------
+
+It looks like we need to add `coins` to the implementation and write another test.
+
 ```haskell
-change :: Money -> [ Coin ]
-change 0 = []
-change _ = [25,10,5,1,1]
+coins :: [ Coin ]
+coins = [25,10,5,1]
 ```
 
-Running Mutiple Tests
+```haskell
+prop_ChangeContainsOnlyRealCoins m = forAll (choose (1,100)) $ \m -> all (\x -> elem x coins) $ change m
+```
+
+Passing
+------
+Making this pass is as simple as handing out pennies.
+
+
+```haskell
+change :: Money -> [ Coin ]
+change m = []
+change m = 1 : change (m-1)
+```
+
+```diff
++Green
+```
+
+Running Multiple Tests
 ---------------------
 
 You're probably tired or running tests individually. I know I am!
@@ -149,25 +169,20 @@ But how do I _run_ all my tests?
 *CoinChanger> runTests
 ```
 
-There and Back Again
--------------
-
-Enough evil pair writing **example tests**! Lets write a **property-based** test that requires a _real_ implementation.
-
-```haskell
-prop_ChangeRoundTrip m = forAll (choose (0,100)) m == sum (change m)
-```
-Compiler says, "You need parenthesis around each argument"
-
-```haskell
-prop_ChangeRoundTrip m = forAll (choose (0,100)) $ m == sum (change m)
+```diff
++Green
 ```
 
-Compiler says, "The last parameter should be a function that takes a ``Money`` and returns a ``Testable``"
+Lower Denomination Coins Will Total Less Than the Next Larger Coin.
+----
 
 ```haskell
-prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
+prop_ChangeCoinsWillTotalLessThanNextLargerCoin = forAll (choose (1,4)) $ \m -> 
 ```
+
+TODO Continue from here (Ignore everything below)
+
+
 
 Implementation
 --------------
@@ -214,7 +229,7 @@ Compiler says, "Like Clojure, I need parenthesis around ``dropWhile`` and it's 2
 largestCoin m = head $ dropWhile (>m) [25,10,5,1]
 ```
 
-Refactor for Clairity
+Refactor for Clarity
 --------------------
 
 ```haskell
