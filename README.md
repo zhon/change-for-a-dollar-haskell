@@ -177,7 +177,10 @@ Lower Denomination Coins Will Total Less Than the Next Larger Coin.
 ----
 
 ```haskell
-prop_ChangeCoinsWillTotalLessThanNextLargerCoin = forAll (choose (1,4)) $ \m -> 
+prop_ChangeSameCoinsWillTotalLessThanNextLargerCoin = forAll (choose (0,100)) $ \m ->
+  let _change = change m
+  in all (\x -> (maxAllowedCoins coins x) >= (coinCount _change  x)) $ _change
+
 ```
 
 TODO Continue from here (Ignore everything below)

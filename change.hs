@@ -13,18 +13,18 @@ type Coin = Int
 coins :: [ Coin ]
 coins = [25,10,5,1]
 
-{-change :: Money -> [ Coin ]-}
-{-change 0 = []-}
-{-change m = largestCoin m : change (m - largestCoin m)-}
+change :: Money -> [ Coin ]
+change 0 = []
+change m = largestCoin m : change (m - largestCoin m)
 
 largestCoin :: Money -> Coin
 largestCoin m = head $ dropWhile (>m) coins
 
-change2 :: Money -> [ Coin ]
-change2 0 = []
-change2 m = 1 : change (m-1)
+{-change2 :: Money -> [ Coin ]-}
+{-change2 0 = []-}
+{-change2 m = 1 : change (m-1)-}
 
-change = change2
+{-change = change2-}
 
 change' = unfoldr nextCoin
     where
@@ -36,8 +36,22 @@ prop_ChangeRoundTrip m = forAll (choose (0,100)) $ \m -> m == sum (change m)
 prop_ChangeContainsOnlyRealCoins m = forAll (choose (1,100)) $ \m -> all (\x -> elem x coins) $ change m
 
 
-prop_ChangeSameCoinsWillTotalLessThanNextLargerCoin = forAll (choose (1,4)) $ \m -> group $ change m
+prop_ChangeSameCoinsWillTotalLessThanNextLargerCoin = forAll (choose (0,100)) $ \m ->
+  let _change = change m
+  in all (\x -> (maxAllowedCoins coins x) >= (coinCount _change  x)) $ _change
 
+coinCount :: [Coin] -> Coin -> Int
+coinCount xs c = (length . filter (==c)) xs
+
+higherCoin :: [Coin] -> Coin -> Coin
+higherCoin (_:[]) _ = maxBound::Coin
+higherCoin (x:y:xs) c
+  | x == c && y > c = y
+  | y == c && x > c = x
+  | otherwise = higherCoin (y:xs) c
+
+maxAllowedCoins :: [Coin] -> Coin -> Int
+maxAllowedCoins xs c = ((higherCoin xs c)-1) `div` c
 
 
 prop_LargestCoinPenny m = forAll (choose (1,4)) $ \m -> largestCoin m == 1
@@ -48,25 +62,6 @@ prop_ChangeEqualsChangePrime m = forAll (choose (0,100)) $ \m -> change m == cha
 
 prop_CoinsAreOrderLargestToSmallest = coins == (reverse $ sort coins)
 
-coin_count :: [Coin] -> Coin -> Int
-coin_count xs c = (length . filter (==c)) xs
-max_coin c1 c2 = floor ((c1-0.1)/c2)
-
-pair_coins = zip (100:coins) coins
-
-{-prop_EachCoinMustBeLessThanCoinCount m = forAll (choose (0,100)) $ \m -> all (\t -> 1==1  ) pair_coins change(m)-}
-
-{-all ( 1==1  ) pair_coins change(7)-}
-
-{-\m -> (change m)-}
-
-{-map (\x -> div ((fst x)-1) (snd x )) $ zip (100:coins) coins-}
-
-{-map (\x -> ((div((fst x)-1)  (snd x)), (snd x))) pair_coins-}
-
-{-map (\x -> ((div((fst x)-1)  (snd x)), (snd x))) pair_coins-}
-
 
 return []
 runTests = $quickCheckAll
-
